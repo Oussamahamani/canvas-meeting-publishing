@@ -35,38 +35,40 @@ app.use(cors());
 
 
 
-///schedule job for publishing recording
-cron.schedule('30 21 * * 1,2,4,5', async() => {
-  // Your task goes here
-  console.log('cloud publish')
- const result = await fetch('https://zoombot.peerfect.net/canvas', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ key:'Oussama2000' })
-})
-}, {
-  timezone: 'America/New_York'
-});
+// ///schedule job for publishing recording
+// cron.schedule('30 21 * * 1,2,4,5', async() => {
+//   // Your task goes here
+//   console.log('cloud publish')
+//  const result = await fetch('https://zoombot.peerfect.net/canvas', {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json'
+//   },
+//   body: JSON.stringify({ key:'Oussama2000' })
+// })
+// }, {
+//   timezone: 'America/New_York'
+// });
 
-//job for inviting bot the meeting
-cron.schedule('5 11 * * 1,2,4,5', async() => {
-  // Your task goes here
-  console.log('bot job')
-  await fetch('https://zoombot.peerfect.net/bot', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ zoom:'https://perscholas.zoom.us/j/96928563286?pwd=YjBHSjg4dkZoK2FmWERseVNJVDJQQT09' })
-  })
+// //job for inviting bot the meeting
+// cron.schedule('5 11 * * 1,2,4,5', async() => {
+//   // Your task goes here
+//   console.log('bot job')
+//   await fetch('https://zoombot.peerfect.net/bot', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({ zoom:'https://perscholas.zoom.us/j/96928563286?pwd=YjBHSjg4dkZoK2FmWERseVNJVDJQQT09' })
+//   })
   
-}, {
-  timezone: 'America/New_York'
-});
+// }, {
+//   timezone: 'America/New_York'
+// });
 
-
+app.post('/get',async(req,res)=>{
+  res.status(200).json({code:'working'})
+})
 
 // Define a Mongoose model based on the schema
 
