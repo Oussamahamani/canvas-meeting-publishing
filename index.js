@@ -78,6 +78,7 @@ app.post('/canvas',async(req,res)=>{
     res.status(200).json({code:'sucess'})
     return
   }
+  try{
   
   canvasLink = 'https://perscholas.instructure.com/courses/1671/external_tools/4939'
   puppeteerExtra.use(stealthPlugin());
@@ -108,7 +109,7 @@ app.post('/canvas',async(req,res)=>{
   }else{
     browser = await puppeteerExtra.launch({ 
       headless: 'true',//responsible for opening tab
-      // executablePath: '/usr/bin/chromium-browser',
+      executablePath: '/usr/bin/chromium-browser',
       ignoreDefaultArgs: ['--disable-extensions'] ,
       args:[   '--disable-gpu',
       '--disable-dev-shm-usage',
@@ -144,7 +145,6 @@ app.post('/canvas',async(req,res)=>{
   cookies = JSON.parse(fs.readFileSync('canvas.json', 'utf-8'));
   }
   await page.setCookie(...cookies);
-  try{
 
    
 
