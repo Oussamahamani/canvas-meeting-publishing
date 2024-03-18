@@ -5,7 +5,7 @@ const express = require('express')
 const puppeteerExtra  = require('puppeteer-extra')
 const app = express()
 const localEnv = process.env.PORT?true: false
-const PORT = process.env.PORT || 3001 ;
+const PORT = process.env.PORT || 5454 ;
 const helmet = require("helmet");// Load the connectDB function
 const rateLimit = require('express-rate-limit')
 const fs = require('fs');
@@ -34,58 +34,24 @@ app.use(cors());
 
 
 
-
-// ///schedule job for publishing recording
-// cron.schedule('30 21 * * 1,2,4,5', async() => {
-//   // Your task goes here
-//   console.log('cloud publish')
-//  const result = await fetch('https://zoombot.peerfect.net/canvas', {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json'
-//   },
-//   body: JSON.stringify({ key:'Oussama2000' })
-// })
-// }, {
-//   timezone: 'America/New_York'
-// });
-
-// //job for inviting bot the meeting
-// cron.schedule('5 11 * * 1,2,4,5', async() => {
-//   // Your task goes here
-//   console.log('bot job')
-//   await fetch('https://zoombot.peerfect.net/bot', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ zoom:'https://perscholas.zoom.us/j/96928563286?pwd=YjBHSjg4dkZoK2FmWERseVNJVDJQQT09' })
-//   })
-  
-// }, {
-//   timezone: 'America/New_York'
-// });
-
-app.post('/get',async(req,res)=>{
+app.get('/',async(req,res)=>{
+  console.log('hello')
   res.status(200).json({code:'working'})
 })
 
-// Define a Mongoose model based on the schema
 
-app.post('/canvas',async(req,res)=>{
+app.get('/canvas',async(req,res)=>{
   console.log('yay',req.body)
-  if(req.body.key !=="Oussama2000"){
-    res.status(200).json({code:'sucess'})
-    return
-  }
+
   try{
-  
-  canvasLink = 'https://perscholas.instructure.com/courses/1671/external_tools/4939'
+   
+
+  canvasLink = 'https://perscholas.instructure.com/courses/1966/external_tools/5543'
   puppeteerExtra.use(stealthPlugin());
   let browser
-  if(localEnv){
+  if(!localEnv){
     browser = await puppeteerExtra.launch({ 
-      headless: false,//responsible for opening tab
+      headless: false,//responsible for opening tab// making false for the browser to show up
       ignoreDefaultArgs: ['--disable-extensions'] ,
       args:[   '--disable-gpu',
       '--disable-dev-shm-usage',
@@ -172,7 +138,7 @@ if(url === "https://perscholas.instructure.com/login/canvas"){
   fs.writeFileSync('canvas.json', JSON.stringify(cookies));
 }
 
-const elementHandle = await page.waitForSelector('#tool_content');
+const elementHandle = await page.waitForSelector('.tool_launch');
 const frame = await elementHandle.contentFrame();
 
 const openRecordings = await frame.waitForSelector('div[role="tab"]:nth-of-type(4)');
