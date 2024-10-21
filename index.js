@@ -27,14 +27,13 @@ app.use(limiter)
 app.use(cors());
 
 
-var task = cron.schedule('0 23 * * 1-5', () => {
-  // This function will be executed every minute
-  fetch("https://canvas-meeting-publishing-production.up.railway.app/canvas")
-},{
-  timezone: 'America/New_York' // Set timezone to Eastern Time Zone
-});
+////:TODO uncomment this to create the task/ you can also update the time you want the task run
+// var task = cron.schedule('0 23 * * 1-5', () => {
+//   // This function will be executed every minute
+//   fetch(process.env.appLink)
+// }, {timezone: 'America/New_York' // Set timezone to Eastern Time Zone});
 
-task.start();
+// task.start();
 
 app.get('/',async(req,res)=>{
   console.log('hello')
@@ -48,21 +47,15 @@ app.get('/canvas',async(req,res)=>{
   try{
    
 
-  canvasLink = process.env.canvas_zoom_link
+  canvasLink = "https://perscholas.instructure.com/courses/1966/external_tools/5543"
   let browser
-  if(!localEnv){
+
     browser = await puppeteer.launch({ 
       headless: false,//responsible for opening tab// making false for the browser to show up
       ignoreDefaultArgs: ['--disable-extensions'] ,
       args:['--no-sandbox', '--disable-setuid-sandbox']
     });
-  }else{
-    browser = await puppeteer.launch({ 
-      headless: 'true',//responsible for opening tab
-      ignoreDefaultArgs: ['--disable-extensions'] ,
-      args:['--no-sandbox', '--disable-setuid-sandbox']
-    });
-  }
+  
 
 
   const page = await browser.newPage();
