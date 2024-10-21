@@ -1,64 +1,32 @@
 require('dotenv').config()
 const puppeteer = require('puppeteer')
-const express = require('express')
-const app = express()
-const localEnv = process.env.PORT?true: false
-const PORT = process.env.PORT || 5454 ;
-const helmet = require("helmet");// Load the connectDB function
-const rateLimit = require('express-rate-limit')
 const fs = require('fs');
-const cors = require('cors');
-var cron = require('node-cron');
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-})
-app.use(express.json());
-// a middleware that formats the form data (currently a string that looks like query params) into a object we can use
-app.use(express.urlencoded({ extended: true }))
-app.use(helmet());
 
 
-// look for static files (like css) in the public folder
-app.use(express.static('public'))
-app.use(limiter)
-app.use(cors());
+let main = async()=>{
+  // console.log('yay',req.body)
 
-
-////:TODO uncomment this to create the task/ you can also update the time you want the task run
-// var task = cron.schedule('0 23 * * 1-5', () => {
-//   // This function will be executed every minute
-//   fetch(process.env.appLink)
-// }, {timezone: 'America/New_York' // Set timezone to Eastern Time Zone});
-
-// task.start();
-
-app.get('/',async(req,res)=>{
-  console.log('hello')
-  res.status(200).json({code:'working'})
-})
-
-
-app.get('/canvas',async(req,res)=>{
-  console.log('yay',req.body)
-
-  try{
-   
-
-  canvasLink = "https://perscholas.instructure.com/courses/1966/external_tools/5543"
+  canvasLink = "https://perscholas.instructure.com/courses/2284/external_tools/6407"
   let browser
 
     browser = await puppeteer.launch({ 
-      headless: false,//responsible for opening tab// making false for the browser to show up
+      headless: true,//responsible for opening tab// making false for the browser to show up
       ignoreDefaultArgs: ['--disable-extensions'] ,
       args:['--no-sandbox', '--disable-setuid-sandbox']
     });
+  try{
+   
+
   
 
 
-  const page = await browser.newPage();
+  let page = await browser.newPage();
+  await page.setViewport({
+    width: 1920,
+    height: 1080
+  });
+
+
   await page.setDefaultNavigationTimeout(0); // Set the timeout to 0 to disable it
   let cookies = [];
 
@@ -93,7 +61,10 @@ if(url === "https://perscholas.instructure.com/login/canvas"){
   cookies = await page.cookies();
   fs.writeFileSync('canvas.json', JSON.stringify(cookies));
 }
-
+const newPage = await browser.newPage();
+await newPage.goto('https://perscholas.instructure.com/courses/2284/external_tools/6407', { timeout: 0, slowMo: 500 });
+page = newPage
+console.log('New tab opened with URL:', await newPage.url());
 const elementHandle = await page.waitForSelector('.tool_launch');
 const frame = await elementHandle.contentFrame();
 
@@ -106,7 +77,7 @@ console.log('cloud meeting click')
     await frame.evaluate(() => {
       let meetings = Array.from(document.querySelectorAll('td button'))
       console.log(meetings,'meetings')
-      let lastMeeting = meetings[0]
+      let lastMeeting = meetings[2]
       console.log(lastMeeting.checked)
       if(!lastMeeting.checked){
         // lastMeeting.evaluate(b => b.click())
@@ -116,37 +87,28 @@ console.log('cloud meeting click')
     });
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    console.log('done')
-    res.status(200).json({status:'success'})
-    await browser.close();
-    return
-    
-
-
+    console.log('done, published meeting')
+    // res.status(200).json({status:'success'})
 }catch(err){
   
   console.log(err,'main eror')
-console.log('close')
 
-res.status(400).json({err:err.message})
+// res.status(400).json({err:err.message})
 
+
+}finally{
+  console.log("closing browser")
   await browser.close();
-  return
 }
-})
+}
+
+
+main()
 
 
 
 
 
-
-
-
-app.listen(PORT, () => { 
-    console.log('Listening to the port:  ' + PORT, localEnv?'local':'production')
-
-  
-})
 
 
 
